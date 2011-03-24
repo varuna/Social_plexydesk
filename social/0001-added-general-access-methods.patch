@@ -1,0 +1,33 @@
+From d9438d2fd6eb5ccf2a3b176a1b6f93811fda21d8 Mon Sep 17 00:00:00 2001
+From: MaKsaw <wpmahesh@gmail.com>
+Date: Thu, 10 Sep 2009 23:48:06 +0530
+Subject: [PATCH] added  general access methods
+
+---
+ social/daemon.cpp |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/social/daemon.cpp b/social/daemon.cpp
+index 706128d..68217e2 100644
+--- a/social/daemon.cpp
++++ b/social/daemon.cpp
+@@ -41,13 +41,13 @@ QStringList SocialDaemon::getPluginsList()
+ QStringList SocialDaemon::supportedMethods(const QString &pluginName)
+ {
+     SocialPlugin *instance = getPluginInstance(pluginName);
+-    return instance->supportedMethods();
++    return instance->supportedMethods(); //SocialPlugin.h must have the method QStringList supportedMethods()
+ }
+ 
+ 
+ QVariantMap SocialDaemon::data(const QString &pluginName, const QString &methodName, QVariantMap args)
+ {
+-    QObject *pluginInstance = getPluginInstance(pluginName);
+-   // SocialPlugin *socioPlugin = static_cast<SocialPlugin *>(pluginInstance);
++    SocialPlugin *socialPlugin = getPluginInstance(pluginName);
++    return socialPlugin->data(methodName, args); //SocialPlugin.h must have the method QVariantMap data(QString &methodName, QVariantMap args)
+ }
+ 
+-- 
+1.6.0.4
+

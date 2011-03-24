@@ -1,0 +1,99 @@
+From 6d7fa0649c7d39028b985a8b00520d3b3c519908 Mon Sep 17 00:00:00 2001
+From: MaKsaw <wpmahesh@gmail.com>
+Date: Thu, 10 Sep 2009 23:58:38 +0530
+Subject: [PATCH] Revert "added general SocialPlugin access methods to the daemon"
+
+This reverts commit 50fa0b09398e846b298731b1480428f5a2c2e279.
+---
+ social/daemon.cpp |   28 +++-------------------------
+ social/daemon.h   |   17 ++---------------
+ 2 files changed, 5 insertions(+), 40 deletions(-)
+
+diff --git a/social/daemon.cpp b/social/daemon.cpp
+index a404480..9bab1cc 100644
+--- a/social/daemon.cpp
++++ b/social/daemon.cpp
+@@ -2,10 +2,7 @@
+ #include <QtDBus>
+ #include <QDBusConnection>
+ #include <pluginloader.h>
+-#include <QDebug>
+-#include <QStringList>
+ 
+-using namespace PlexyDesk;
+ 
+ 
+ SocialDaemon::SocialDaemon(QApplication *parent=0) : QDBusAbstractAdaptor(parent)
+@@ -14,32 +11,13 @@ SocialDaemon::SocialDaemon(QApplication *parent=0) : QDBusAbstractAdaptor(parent
+     QDBusConnection::sessionBus().registerService("org.plexydesk.social");
+ }
+ 
+-QString SocialDaemon::display1()
++QString SocialDaemon::display()
+ {
+     return "Hi";
+ }
+ 
+-SocialPlugin* SocialDaemon::getPluginInstance(const QString &pluginName)
++QObject SocialDaemon::getPluginInstance(const QString &name)
+ {
+-    QObject *pluginInstance = (PluginLoader::getInstance()->instance(pluginName));
+-    SocialPlugin *socioPlugin = static_cast<SocialPlugin *>(pluginInstance);
+-    return socioPlugin;
+-}
+-
+-QStringList SocialDaemon::getPluginsList()
+-{
+-    return PluginLoader::getInstance()->listPlugins(0);
+-}
+-
+-QStringList SocialDaemon::supportedMethods(const QString &pluginName)
+-{
+-    SocialPlugin *instance = getPluginInstance(pluginName);
+-    return instance->supportedMethods();//SocialPlugin.h must contain a method QStringList supportedMethods()
+-}
+-
+-QVariantMap SocialDaemon::data(const QString &pluginName, const QString &methodName, QVariantMap args)
+-{
+-    SocialPlugin *socioPlugin = getPluginInstance(pluginName);
+-    socioPlugin->data(methodName, args);//SocialPlugin.h must contain a method QVariantMap data(const QString &methodName, QVariantMap args)
++    return PluginLoader::getInstance()->instance(name);
+ }
+ 
+diff --git a/social/daemon.h b/social/daemon.h
+index e5f7569..4fc73e5 100644
+--- a/social/daemon.h
++++ b/social/daemon.h
+@@ -1,27 +1,14 @@
+ #include <QApplication>
+ #include <QDBusAbstractAdaptor>
+ #include <QObject>
+-#include <QDBusVariant>
+-#include <QList>
+-#include <QStringList>
+-#include <QVariantMap>
+-//#include <SocialPlugin.h>  <-----**********To be implemented*****************
+-
+ class SocialDaemon : QDBusAbstractAdaptor
+ {
+     Q_OBJECT
+     Q_CLASSINFO("D-Bus Interface", "local.socioplexy.Configuration")
+     //Q_PROPERTY(QString display READ display)
+-
+-private:
+-    SocialPlugin* getPluginInstance(const QString &pluginName);
+ public:
+     SocialDaemon(QApplication *parent);
+ public slots:
+-    QString display1();
+-    QStringList getPluginsList();
+-    QStringList supportedMethods(const QString &pluginName);
+-    QVariantMap data(const QString &pluginName, const QString &methodName, QVariantMap args);
+-
+-
++    QString display();
++    QObject SocialDaemon::getPluginInstance(const QString &name);
+ };
+-- 
+1.6.0.4
+

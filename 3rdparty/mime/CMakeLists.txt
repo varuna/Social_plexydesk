@@ -1,0 +1,24 @@
+SET (mimetypesrc 	freedesktopmime.cpp)
+QT4_AUTOMOC(${mimetypesrc})
+add_library (mimetype SHARED ${mimetypesrc})
+
+INCLUDE_DIRECTORIES(
+    ${QT_INCLUDES}
+    ${QT_QTNETWORK_INCLUDE_DIR}
+    ${QT_QTXML_INCLUDE_DIR}
+    ${QT_QTTEST_INCLUDE_DIR}
+)
+
+TARGET_LINK_LIBRARIES(
+    mimetype
+    ${QT_QTGUI_LIBRARY}
+    ${QT_QTXML_LIBRARY}
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTSVG_LIBRARY}
+)
+
+if(NOT WIN32)
+INSTALL(TARGETS mimetype DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
+elseif(WIN32)
+INSTALL(TARGETS mimetype DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/)
+endif(NOT WIN32)
